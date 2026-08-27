@@ -9,6 +9,7 @@ export type Case = {
   brief: string
   story: string
   seedSql: string
+  starterSql?: string
   schemas: CaseSchema[]
   hints: string[]
   solution: {

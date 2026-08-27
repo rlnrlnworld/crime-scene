@@ -5,6 +5,7 @@ export const cafeMurder: Case = {
   title: '카페 Noir 살인사건',
   brief:
     '2026-08-25 밤, 서울 심야 카페 Noir에서 바리스타 한지호가 살해됐다. 사건 기록을 시작으로 데이터베이스를 뒤져 진짜 범인을 찾아라.',
+  starterSql: 'SELECT * FROM crime_scene_report;',
   story: `# 카페 Noir 살인사건
 
 **2026년 8월 25일 화요일 밤**, 서울 도심의 심야 카페 **Noir**에서 바리스타 **한지호**(28)가 카운터 뒤에서 쓰러진 채 발견됐다.

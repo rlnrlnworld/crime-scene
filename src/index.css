@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Balsamiq Sans", "Comic Sans MS", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* dark chalkboard palette — cream strokes on warm dark */
+  --color-ink: #0e0a06;
+  --color-ink-2: #16110c;
+  --color-surface: #1c1712;
+  --color-surface-2: #241e17;
+  --color-line: #e8dcc0;
+  --color-line-dim: #a89573;
+  --color-paper: #f2ead4;
+  --color-muted: #a89573;
+  --color-accent: #ffb020;
+  --color-accent-dim: #b88320;
+  --color-accent-dark: #7a5010;
+  --color-accent-shadow: #2a1a04;
+  --color-blood: #e14545;
+  --color-blood-dark: #6a1818;
+  --color-teal: #4dd0c9;
+  --color-shadow: rgba(0, 0, 0, 0.85);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(rgba(232, 220, 192, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 0 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+}
+button:disabled { cursor: not-allowed; }
+
+input, select, textarea {
+  font-size: inherit;
+  font-family: inherit;
+}
+
+/* hand-drawn irregular border-radius */
+.sketchy {
+  border-radius: 15px 3px 15px 2px / 2px 15px 3px 15px;
+}
+.sketchy-2 {
+  border-radius: 8px 12px 3px 15px / 12px 3px 12px 8px;
+}
+.sketchy-3 {
+  border-radius: 3px 15px 3px 15px / 15px 3px 15px 3px;
+}
+.sketchy-tag {
+  border-radius: 6px 2px 8px 3px / 3px 8px 2px 6px;
+}
+.sketchy-pill {
+  border-radius: 999px 24px 999px 24px / 24px 999px 24px 999px;
+}
+.sketchy-btn {
+  border-radius: 10px 4px 12px 3px / 3px 12px 4px 10px;
+}
+
+/* marker scribble underline */
+.scribble-underline {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M2 5 Q 15 1 30 4 T 60 4 T 98 3' fill='none' stroke='%23ffb020' stroke-width='2' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 6px;
+  padding-bottom: 6px;
+}
+
+/* subtle wobble on hover for stickers */
+.wobble {
+  transition: transform 0.15s ease;
+}
+.wobble:hover {
+  transform: rotate(-1.5deg) scale(1.02);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+::-moz-selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-line-dim);
+  border-radius: 999px;
+  border: 3px solid var(--color-ink);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-line); }

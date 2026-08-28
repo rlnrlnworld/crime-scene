@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Lock, Check } from 'lucide-react'
 import type { IconPos } from '../lib/desktop-layout'
 
 type Props = {
@@ -12,7 +13,7 @@ type Props = {
   onSelect: () => void
   onOpen?: () => void
   onMove: (pos: IconPos) => void
-  onMoveEnd?: () => void
+  onMoveEnd?: (finalPos: IconPos) => void
 }
 
 const ICON_W = 104
@@ -40,17 +41,19 @@ export function DesktopIcon({
     const iconX = position.x
     const iconY = position.y
     draggedRef.current = false
+    let latestPos: IconPos = { x: iconX, y: iconY }
 
     const move = (ev: PointerEvent) => {
       const dx = ev.clientX - startX
       const dy = ev.clientY - startY
       if (!draggedRef.current && Math.hypot(dx, dy) > DRAG_THRESHOLD) {
         draggedRef.current = true
-        document.body.style.cursor = 'grabbing'
+        document.body.style.cursor = "url('/cursor-grabbing.svg?v=5') 16 17, grabbing"
         document.body.style.userSelect = 'none'
       }
       if (draggedRef.current) {
-        onMove({ x: iconX + dx, y: iconY + dy })
+        latestPos = { x: iconX + dx, y: iconY + dy }
+        onMove(latestPos)
       }
     }
 
@@ -59,7 +62,7 @@ export function DesktopIcon({
       window.removeEventListener('pointerup', up)
       document.body.style.cursor = ''
       document.body.style.userSelect = ''
-      if (draggedRef.current) onMoveEnd?.()
+      if (draggedRef.current) onMoveEnd?.(latestPos)
     }
 
     window.addEventListener('pointermove', move)
@@ -129,71 +132,43 @@ export function DesktopIcon({
 }
 
 function FolderSvg({ variant }: { variant: 'folder' | 'folder-solved' | 'folder-locked' }) {
-  const fill =
-    variant === 'folder-solved'
-      ? 'var(--color-teal)'
-      : variant === 'folder-locked'
-        ? 'var(--color-surface)'
-        : 'var(--color-surface)'
-  const stroke =
-    variant === 'folder-locked' ? 'var(--color-line-dim)' : 'var(--color-line)'
-  const strokeDash = variant === 'folder-locked' ? '5 3' : undefined
-
   return (
-    <svg
-      width="72"
-      height="60"
-      viewBox="0 0 72 60"
-      fill="none"
-      style={{ filter: 'drop-shadow(3px 3px 0 rgba(0,0,0,0.7))' }}
+    <div
+      className="relative"
+      style={{
+        width: 72,
+        height: 54,
+        filter: 'drop-shadow(3px 3px 0 rgba(0,0,0,0.7))',
+      }}
     >
-      <path
-        d="M4 14 L24 14 L30 8 L68 8 L68 54 L4 54 Z"
-        fill={fill}
-        stroke={stroke}
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        strokeDasharray={strokeDash}
-      />
-      <path
-        d="M4 22 L68 22"
-        stroke={stroke}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeDasharray={strokeDash}
+      <img
+        src="/folder.svg"
+        alt=""
+        draggable={false}
+        style={{
+          display: 'block',
+          width: '100%',
+          height: '100%',
+          opacity: variant === 'folder-locked' ? 0.55 : 1,
+          filter: variant === 'folder-locked' ? 'grayscale(1)' : undefined,
+        }}
       />
       {variant === 'folder-solved' && (
-        <path
-          d="M28 38 L34 44 L46 30"
-          stroke="var(--color-ink)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-teal)] border-[2px] border-[var(--color-ink)] shadow-[2px_2px_0_var(--color-shadow)]">
+            <Check className="w-4 h-4 text-[var(--color-ink)]" strokeWidth={3} />
+          </div>
+        </div>
       )}
       {variant === 'folder-locked' && (
-        <>
-          <rect
-            x="30"
-            y="34"
-            width="14"
-            height="12"
-            rx="1.5"
-            fill="var(--color-ink)"
-            stroke="var(--color-line-dim)"
-            strokeWidth="2"
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <Lock
+            className="w-7 h-7 text-[var(--color-line)]"
+            strokeWidth={2.5}
+            style={{ filter: 'drop-shadow(1px 1px 0 rgba(0,0,0,0.7))' }}
           />
-          <path
-            d="M33 34 L33 30 Q33 26 37 26 Q41 26 41 30 L41 34"
-            stroke="var(--color-line-dim)"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
-          />
-        </>
+        </div>
       )}
-    </svg>
+    </div>
   )
 }

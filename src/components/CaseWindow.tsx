@@ -83,7 +83,7 @@ export function CaseWindow({ case_, onClose }: Props) {
       const dy = ev.clientY - startY
       if (!dragged && Math.hypot(dx, dy) > 3) {
         dragged = true
-        document.body.style.cursor = 'grabbing'
+        document.body.style.cursor = "url('/cursor-grabbing.svg?v=5') 16 17, grabbing"
         document.body.style.userSelect = 'none'
       }
       if (dragged) {
@@ -133,7 +133,7 @@ export function CaseWindow({ case_, onClose }: Props) {
       saveJSON(SIZE_KEY, size)
     }
 
-    document.body.style.cursor = 'nwse-resize'
+    document.body.style.cursor = "url('/cursor-resize.svg') 15 15, nwse-resize"
     document.body.style.userSelect = 'none'
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up)

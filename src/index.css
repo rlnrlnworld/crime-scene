@@ -27,6 +27,10 @@ html, body, #root {
   height: 100%;
 }
 
+html, body {
+  cursor: url('/cursor-default.svg') 2 2, auto;
+}
+
 body {
   margin: 0;
   color: var(--color-paper);
@@ -42,16 +46,53 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+button:not(:disabled),
+a,
+[role="button"],
+.cursor-pointer {
+  cursor: url('/cursor-pointer.svg?v=3') 17 2, pointer;
+}
+.cursor-grab {
+  cursor: url('/cursor-grab.svg?v=3') 18 17, grab;
+}
+.cursor-grabbing,
+.active\:cursor-grabbing:active {
+  cursor: url('/cursor-grabbing.svg?v=5') 16 17, grabbing;
+}
 button {
-  cursor: pointer;
   font-size: inherit;
   font-family: inherit;
 }
-button:disabled { cursor: not-allowed; }
+button:disabled,
+.cursor-not-allowed {
+  cursor: url('/cursor-not-allowed.svg') 15 14, not-allowed;
+}
+.cursor-row-resize {
+  cursor: url('/cursor-resize.svg') 15 15, row-resize;
+}
+.cursor-nwse-resize {
+  cursor: url('/cursor-resize.svg') 15 15, nwse-resize;
+}
 
 input, select, textarea {
   font-size: inherit;
   font-family: inherit;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input:not([type]),
+textarea,
+[contenteditable="true"],
+.monaco-editor,
+.monaco-editor .view-lines,
+.monaco-editor .view-line,
+.monaco-editor textarea,
+.cursor-text {
+  cursor: url('/cursor-text.svg') 6 13, text;
 }
 
 /* hand-drawn irregular border-radius */

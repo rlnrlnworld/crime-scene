@@ -9,7 +9,7 @@ function App() {
 
   return (
     <div className="h-screen w-screen bg-[var(--color-ink)] overflow-hidden">
-      <Desktop onOpen={setOpenCaseId} />
+      <Desktop onOpen={setOpenCaseId} activeCase={openCase} />
       {openCase && (
         <CaseWindow
           case_={openCase}

@@ -63,7 +63,7 @@ export function ConsoleResultSplit({
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up)
     document.body.style.userSelect = 'none'
-    document.body.style.cursor = 'row-resize'
+    document.body.style.cursor = "url('/cursor-resize.svg') 15 15, row-resize"
   }
 
   return (

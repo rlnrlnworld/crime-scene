@@ -8,6 +8,7 @@ export type Case = {
   title: string
   brief: string
   story: string
+  difficulty: 1 | 2 | 3 | 4 | 5
   seedSql: string
   starterSql?: string
   schemas: CaseSchema[]

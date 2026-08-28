@@ -3,6 +3,7 @@ import type { Case } from './types'
 export const cafeMurder: Case = {
   id: 'cafe-noir',
   title: '카페 Noir 살인사건',
+  difficulty: 1,
   brief:
     '2026-08-25 밤, 서울 심야 카페 Noir에서 바리스타 한지호가 살해됐다. 사건 기록을 시작으로 데이터베이스를 뒤져 진짜 범인을 찾아라.',
   starterSql: 'SELECT * FROM crime_scene_report;',

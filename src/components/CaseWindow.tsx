@@ -193,6 +193,27 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
             {case_.title}
           </div>
         </div>
+        <div
+          className="shrink-0 flex items-center gap-2 pl-3"
+          aria-label={`난이도 ${case_.difficulty} / 5`}
+          title={`난이도 ${case_.difficulty} / 5`}
+        >
+          <span className="text-[13px] font-mono text-[var(--color-muted)] tracking-wider">
+            난이도
+          </span>
+          <div className="flex items-center gap-0.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <img
+                key={i}
+                src="/star.svg"
+                alt=""
+                draggable={false}
+                className="w-4 h-4"
+                style={{ opacity: i < case_.difficulty ? 1 : 0.22 }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 min-h-0">

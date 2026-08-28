@@ -1,4 +1,4 @@
-import { CheckCircle2, Database, Send, XCircle } from 'lucide-react'
+import { Database, Send, XCircle } from 'lucide-react'
 import { Button } from './Button'
 import { Card } from './Card'
 import { SectionLabel } from './SectionLabel'
@@ -80,12 +80,6 @@ export function CasePanel({
             제출
           </Button>
         </div>
-        {verdict === 'correct' && (
-          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 border-[2px] border-[var(--color-line)] bg-[var(--color-teal)] text-black text-[15px] font-bold sketchy-tag -rotate-1">
-            <CheckCircle2 className="w-4 h-4" strokeWidth={2.5} />
-            정답! 사건 해결.
-          </div>
-        )}
         {verdict === 'wrong' && (
           <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 border-[2px] border-[var(--color-line)] bg-[var(--color-blood)] text-white text-[15px] font-bold sketchy-tag rotate-1">
             <XCircle className="w-4 h-4" strokeWidth={2.5} />

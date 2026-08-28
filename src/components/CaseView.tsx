@@ -6,6 +6,7 @@ import { ConsoleResultSplit } from './ConsoleResultSplit'
 import { HintsModal } from './HintsModal'
 import { NotebookModal } from './NotebookModal'
 import { ResultTable } from './ResultTable'
+import { SolvedOverlay } from './SolvedOverlay'
 import { SqlEditor } from './SqlEditor'
 import type { Case } from '../cases'
 import { resetDb, runQuery, type QueryResult } from '../lib/db'
@@ -32,6 +33,7 @@ export function CaseView({ case_ }: Props) {
   const [caseFileOpen, setCaseFileOpen] = useState(false)
   const [hintsOpen, setHintsOpen] = useState(false)
   const [notebookOpen, setNotebookOpen] = useState(false)
+  const [solvedOverlayOpen, setSolvedOverlayOpen] = useState(false)
   const [hintsRevealed, setHintsRevealed] = useState(() =>
     loadHintsRevealed(case_.id),
   )
@@ -104,7 +106,10 @@ export function CaseView({ case_ }: Props) {
     const normalized = answer.trim()
     const correct = normalized === case_.solution.answer
     setVerdict(correct ? 'correct' : 'wrong')
-    if (correct) markSolved(case_.id)
+    if (correct) {
+      markSolved(case_.id)
+      setSolvedOverlayOpen(true)
+    }
   }
 
   function handleRestore(s: string) {
@@ -123,6 +128,7 @@ export function CaseView({ case_ }: Props) {
   }
 
   return (
+    <div className="relative h-full w-full">
     <div
       className="h-full w-full grid text-[15px] bg-[var(--color-ink)]"
       style={{
@@ -199,6 +205,14 @@ export function CaseView({ case_ }: Props) {
         caseTitle={case_.title}
         onClose={() => setNotebookOpen(false)}
       />
+    </div>
+
+    {solvedOverlayOpen && (
+      <SolvedOverlay
+        answer={case_.solution.answer}
+        onClose={() => setSolvedOverlayOpen(false)}
+      />
+    )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { track } from '@vercel/analytics'
 import { CaseFileModal } from './CaseFileModal'
 import { CaseHero } from './CaseHero'
 import { CasePanel } from './CasePanel'
@@ -109,6 +110,12 @@ export function CaseView({ case_ }: Props) {
     if (correct) {
       markSolved(case_.id)
       setSolvedOverlayOpen(true)
+      track('case_solved', {
+        caseId: case_.id,
+        hintsRevealed,
+      })
+    } else {
+      track('case_wrong', { caseId: case_.id })
     }
   }
 
@@ -195,7 +202,16 @@ export function CaseView({ case_ }: Props) {
         open={hintsOpen}
         onClose={() => setHintsOpen(false)}
         onReveal={() =>
-          setHintsRevealed((n) => Math.min(n + 1, case_.hints.length))
+          setHintsRevealed((n) => {
+            const next = Math.min(n + 1, case_.hints.length)
+            if (next > n) {
+              track('hint_revealed', {
+                caseId: case_.id,
+                hintIndex: next,
+              })
+            }
+            return next
+          })
         }
       />
 

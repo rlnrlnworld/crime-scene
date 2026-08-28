@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { NotebookPen, Trash2, Plus } from 'lucide-react'
+import { track } from '@vercel/analytics'
 import { Button } from './Button'
 import { loadNotes, saveNotes, type Note } from '../lib/notes'
 import { timeAgo } from '../lib/history'
@@ -53,6 +54,7 @@ export function NotebookModal({ open, caseId, caseTitle, onClose }: Props) {
     const next = [note, ...notes]
     setNotes(next)
     saveNotes(caseId, next)
+    track('notebook_note_added', { caseId, count: next.length })
     setDraft('')
     const el = textareaRef.current
     if (el) {

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { Fingerprint, FolderOpen, CheckCircle2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Fingerprint, FolderOpen, CheckCircle2, Settings, LogOut } from 'lucide-react'
+import { Button } from './Button'
 import { DesktopIcon } from './DesktopIcon'
 import { HelpModal } from './HelpModal'
 import { cases, type Case } from '../cases'
@@ -58,6 +59,25 @@ export function Desktop({ onOpen, activeCase }: Props) {
   const [now, setNow] = useState(() => new Date())
   const [windowWidth, setWindowWidth] = useState(() => window.innerWidth)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [startOpen, setStartOpen] = useState(false)
+  const [exitConfirmOpen, setExitConfirmOpen] = useState(false)
+  const startRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!startOpen) return
+    const onDoc = (e: MouseEvent) => {
+      if (!startRef.current?.contains(e.target as Node)) setStartOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setStartOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDoc)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [startOpen])
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30_000)
@@ -166,21 +186,71 @@ export function Desktop({ onOpen, activeCase }: Props) {
         className="shrink-0 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] px-2 py-1.5 flex items-center gap-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          className="group flex items-center gap-2 px-3 py-1.5 sketchy-btn bg-transparent hover:bg-[var(--color-accent)] transition-colors"
-        >
-          <Fingerprint
-            className="w-5 h-5 text-[var(--color-accent)] group-hover:text-black"
-            strokeWidth={2.5}
-          />
-          <span className="text-[16px] font-bold tracking-[0.15em] text-[var(--color-paper)] group-hover:text-black">
-            CRIME SCENE
-          </span>
-          <span className="text-[15px] font-mono text-[var(--color-muted)] group-hover:text-black/70">
-            archive
-          </span>
-        </button>
+        <div className="relative" ref={startRef}>
+          <button
+            type="button"
+            onClick={() => setStartOpen((v) => !v)}
+            className={`group flex items-center gap-2 px-3 py-1.5 sketchy-btn transition-colors ${
+              startOpen
+                ? 'bg-[var(--color-accent)]'
+                : 'bg-transparent hover:bg-[var(--color-accent)]'
+            }`}
+          >
+            <Fingerprint
+              className={`w-5 h-5 ${
+                startOpen
+                  ? 'text-black'
+                  : 'text-[var(--color-accent)] group-hover:text-black'
+              }`}
+              strokeWidth={2.5}
+            />
+            <span
+              className={`text-[16px] font-bold tracking-[0.15em] ${
+                startOpen
+                  ? 'text-black'
+                  : 'text-[var(--color-paper)] group-hover:text-black'
+              }`}
+            >
+              CRIME SCENE
+            </span>
+            <span
+              className={`text-[15px] font-mono ${
+                startOpen
+                  ? 'text-black/70'
+                  : 'text-[var(--color-muted)] group-hover:text-black/70'
+              }`}
+            >
+              archive
+            </span>
+          </button>
+
+          {startOpen && (
+            <div className="absolute bottom-full left-0 mb-2 min-w-[180px] border-[2.5px] border-[var(--color-line)] sketchy-3 bg-[var(--color-surface)] shadow-[4px_4px_0_var(--color-shadow)] py-1.5 z-50">
+              <button
+                type="button"
+                onClick={() => {
+                  setStartOpen(false)
+                }}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-[15px] text-[var(--color-paper)] hover:bg-[var(--color-accent)] hover:text-black transition-colors text-left"
+              >
+                <Settings className="w-4 h-4" strokeWidth={2.5} />
+                세팅
+              </button>
+              <div className="h-[1.5px] mx-2 my-1 bg-[var(--color-line-dim)]/40" />
+              <button
+                type="button"
+                onClick={() => {
+                  setStartOpen(false)
+                  setExitConfirmOpen(true)
+                }}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-[15px] text-[var(--color-paper)] hover:bg-[var(--color-blood)] hover:text-white transition-colors text-left"
+              >
+                <LogOut className="w-4 h-4" strokeWidth={2.5} />
+                종료
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="h-9 w-[2px] bg-[var(--color-line-dim)] mx-1" />
 
@@ -229,6 +299,77 @@ export function Desktop({ onOpen, activeCase }: Props) {
       </div>
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
+      <ExitConfirmModal
+        open={exitConfirmOpen}
+        onCancel={() => setExitConfirmOpen(false)}
+        onConfirm={() => {
+          setExitConfirmOpen(false)
+          window.close()
+        }}
+      />
+    </div>
+  )
+}
+
+function ExitConfirmModal({
+  open,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel()
+      if (e.key === 'Enter') onConfirm()
+    }
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onCancel, onConfirm])
+
+  if (!open) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/55 backdrop-blur-[3px]"
+      onClick={onCancel}
+    >
+      <div
+        className="relative w-full max-w-md"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="absolute -top-4 -left-3 z-10 px-3 py-1 border-[2.5px] border-[var(--color-line)] bg-[var(--color-blood)] text-white font-bold text-[15px] sketchy-tag -rotate-[5deg] shadow-[3px_3px_0_var(--color-shadow)] inline-flex items-center gap-1.5">
+          <LogOut className="w-3.5 h-3.5" strokeWidth={2.5} />
+          EXIT
+        </div>
+
+        <div className="sketchy border-[2.5px] border-[var(--color-line)] bg-[var(--color-surface)] shadow-[6px_6px_0_rgba(0,0,0,0.7)] overflow-hidden">
+          <div className="px-8 pt-8 pb-6">
+            <h2 className="text-[22px] md:text-[24px] font-bold text-[var(--color-paper)] leading-[1.2] tracking-tight">
+              종료하시겠습니까?
+            </h2>
+            <p className="mt-2 text-[15px] text-[var(--color-paper)]/75 leading-relaxed">
+              현재 세션이 끝나고 창이 닫힙니다.
+            </p>
+          </div>
+          <div className="px-8 py-4 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] flex items-center justify-end gap-2">
+            <Button variant="secondary" size="md" onClick={onCancel}>
+              취소
+            </Button>
+            <Button variant="danger" size="md" onClick={onConfirm}>
+              <LogOut className="w-4 h-4" strokeWidth={2.5} />
+              종료
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

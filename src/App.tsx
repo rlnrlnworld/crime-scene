@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { CaseWindow } from './components/CaseWindow'
 import { Desktop } from './components/Desktop'
 import { cases } from './cases'
@@ -16,6 +17,7 @@ function App() {
           onClose={() => setOpenCaseId(null)}
         />
       )}
+      <Analytics />
     </div>
   )
 }

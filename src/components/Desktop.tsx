@@ -20,6 +20,8 @@ import bgUrl from '../assets/images/root-bg.svg'
 type Props = {
   onOpen: (id: string) => void
   activeCase: Case | null
+  minimized?: boolean
+  onToggleMinimize?: () => void
 }
 
 type IconDef = {
@@ -52,7 +54,7 @@ function formatDate(d: Date) {
   return `${y}.${m}.${day} ${WEEKDAY[d.getDay()]}`
 }
 
-export function Desktop({ onOpen, activeCase }: Props) {
+export function Desktop({ onOpen, activeCase, minimized, onToggleMinimize }: Props) {
   const [solved] = useState(() => loadSolved())
   const [layout, setLayout] = useState<Record<string, IconPos>>(() =>
     loadLayout(),
@@ -266,9 +268,11 @@ export function Desktop({ onOpen, activeCase }: Props) {
         <div className="h-9 w-[2px] bg-[var(--color-line-dim)] mx-1" />
 
         {activeCase && (
-          <div
-            className="relative flex items-center gap-2 px-3 py-1.5 sketchy-btn bg-[var(--color-surface)] border-[2px] border-[var(--color-accent)] shadow-[2px_2px_0_var(--color-shadow)]"
-            title="사건 열림"
+          <button
+            type="button"
+            onClick={onToggleMinimize}
+            className="relative flex items-center gap-2 px-3 py-1.5 sketchy-btn bg-[var(--color-surface)] border-[2px] border-[var(--color-accent)] shadow-[2px_2px_0_var(--color-shadow)] hover:brightness-110 transition"
+            title={minimized ? '사건 창 열기' : '사건 창 최소화'}
           >
             <FolderOpen
               className="w-4 h-4 text-[var(--color-accent)]"
@@ -280,8 +284,10 @@ export function Desktop({ onOpen, activeCase }: Props) {
             <span className="text-[15px] font-mono text-[var(--color-muted)]">
               #{activeCase.id}
             </span>
-            <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-[var(--color-accent)]" />
-          </div>
+            {!minimized && (
+              <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-[var(--color-accent)]" />
+            )}
+          </button>
         )}
 
         <div className="flex-1" />

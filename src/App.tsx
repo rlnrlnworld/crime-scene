@@ -6,15 +6,29 @@ import { cases } from './cases'
 
 function App() {
   const [openCaseId, setOpenCaseId] = useState<string | null>(null)
+  const [minimized, setMinimized] = useState(false)
   const openCase = cases.find((c) => c.id === openCaseId) ?? null
 
   return (
     <div className="h-screen w-screen bg-[var(--color-ink)] overflow-hidden">
-      <Desktop onOpen={setOpenCaseId} activeCase={openCase} />
+      <Desktop
+        onOpen={(id) => {
+          setOpenCaseId(id)
+          setMinimized(false)
+        }}
+        activeCase={openCase}
+        minimized={minimized}
+        onToggleMinimize={() => setMinimized((m) => !m)}
+      />
       {openCase && (
         <CaseWindow
           case_={openCase}
-          onClose={() => setOpenCaseId(null)}
+          minimized={minimized}
+          onMinimize={() => setMinimized(true)}
+          onClose={() => {
+            setOpenCaseId(null)
+            setMinimized(false)
+          }}
         />
       )}
       <Analytics />

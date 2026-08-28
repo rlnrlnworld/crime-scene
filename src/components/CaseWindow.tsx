@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { X } from 'lucide-react'
+import { X, Minus } from 'lucide-react'
 import { CaseView } from './CaseView'
 import type { Case } from '../cases'
 
 type Props = {
   case_: Case
+  minimized?: boolean
+  onMinimize?: () => void
   onClose: () => void
 }
 
@@ -48,7 +50,7 @@ function defaultPos(size: Size): Pos {
   }
 }
 
-export function CaseWindow({ case_, onClose }: Props) {
+export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
   const [size, setSize] = useState<Size>(() => loadJSON<Size>(SIZE_KEY) ?? defaultSize())
   const [pos, setPos] = useState<Pos>(
     () => loadJSON<Pos>(POS_KEY) ?? defaultPos(loadJSON<Size>(SIZE_KEY) ?? defaultSize()),
@@ -148,6 +150,7 @@ export function CaseWindow({ case_, onClose }: Props) {
         width: size.w,
         height: size.h,
         zIndex: 40,
+        display: minimized ? 'none' : 'flex',
       }}
       className="flex flex-col sketchy border-[2.5px] border-[var(--color-line)] bg-[var(--color-ink)] shadow-[6px_6px_0_rgba(0,0,0,0.7)] overflow-hidden"
     >
@@ -164,15 +167,28 @@ export function CaseWindow({ case_, onClose }: Props) {
         className="flex items-center justify-between px-4 py-2.5 border-b-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] shrink-0 cursor-grab active:cursor-grabbing select-none touch-none"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <button
-            type="button"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={onClose}
-            aria-label="닫기"
-            className="w-8 h-8 shrink-0 rounded-md bg-[var(--color-blood)] border-[2px] border-[var(--color-line)] text-white flex items-center justify-center hover:brightness-110 transition"
-          >
-            <X className="w-4 h-4" strokeWidth={2.5} />
-          </button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={onClose}
+              aria-label="닫기"
+              className="w-8 h-8 rounded-md bg-[var(--color-blood)] border-[2px] border-[var(--color-line)] text-white flex items-center justify-center hover:brightness-110 transition"
+            >
+              <X className="w-4 h-4" strokeWidth={2.5} />
+            </button>
+            {onMinimize && (
+              <button
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={onMinimize}
+                aria-label="최소화"
+                className="w-8 h-8 rounded-md bg-[var(--color-accent)] border-[2px] border-[var(--color-line)] text-[var(--color-ink)] flex items-center justify-center hover:brightness-110 transition"
+              >
+                <Minus className="w-4 h-4" strokeWidth={2.5} />
+              </button>
+            )}
+          </div>
           <div className="text-[16px] font-bold text-[var(--color-paper)] truncate">
             {case_.title}
           </div>

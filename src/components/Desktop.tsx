@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { Fingerprint, FolderOpen, CheckCircle2, Settings, LogOut } from 'lucide-react'
+import { Fingerprint, FolderOpen, CheckCircle2, Settings as SettingsIcon, LogOut } from 'lucide-react'
 import { Button } from './Button'
 import { DesktopIcon } from './DesktopIcon'
 import { HelpModal } from './HelpModal'
+import { SettingsModal } from './SettingsModal'
 import { cases, type Case } from '../cases'
 import { loadSolved } from '../lib/history'
+import { loadSettings, saveSettings, type Settings } from '../lib/settings'
 import {
   defaultPos,
   loadLayout,
@@ -61,6 +63,8 @@ export function Desktop({ onOpen, activeCase }: Props) {
   const [helpOpen, setHelpOpen] = useState(false)
   const [startOpen, setStartOpen] = useState(false)
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settings, setSettings] = useState<Settings>(() => loadSettings())
   const startRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -112,6 +116,7 @@ export function Desktop({ onOpen, activeCase }: Props) {
       disabled: false,
       variant: 'folder' as const,
       iconSrc: '/setting.svg',
+      onOpen: () => setSettingsOpen(true),
     },
     {
       id: 'help',
@@ -126,9 +131,14 @@ export function Desktop({ onOpen, activeCase }: Props) {
   function updatePosition(id: string, pos: IconPos, persist: boolean) {
     setLayout((prev) => {
       const next = { ...prev, [id]: pos }
-      if (persist) saveLayout(next)
+      if (persist && settings.saveIconPositions) saveLayout(next)
       return next
     })
+  }
+
+  function updateSettings(next: Settings) {
+    setSettings(next)
+    saveSettings(next)
   }
 
   const totalCount = cases.length
@@ -230,10 +240,11 @@ export function Desktop({ onOpen, activeCase }: Props) {
                 type="button"
                 onClick={() => {
                   setStartOpen(false)
+                  setSettingsOpen(true)
                 }}
                 className="w-full flex items-center gap-2.5 px-4 py-2 text-[15px] text-[var(--color-paper)] hover:bg-[var(--color-accent)] hover:text-black transition-colors text-left"
               >
-                <Settings className="w-4 h-4" strokeWidth={2.5} />
+                <SettingsIcon className="w-4 h-4" strokeWidth={2.5} />
                 세팅
               </button>
               <div className="h-[1.5px] mx-2 my-1 bg-[var(--color-line-dim)]/40" />
@@ -299,6 +310,12 @@ export function Desktop({ onOpen, activeCase }: Props) {
       </div>
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        settings={settings}
+        onChange={updateSettings}
+      />
       <ExitConfirmModal
         open={exitConfirmOpen}
         onCancel={() => setExitConfirmOpen(false)}

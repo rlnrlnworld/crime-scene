@@ -4,6 +4,7 @@ import { CaseHero } from './CaseHero'
 import { CasePanel } from './CasePanel'
 import { ConsoleResultSplit } from './ConsoleResultSplit'
 import { HintsModal } from './HintsModal'
+import { NotebookModal } from './NotebookModal'
 import { ResultTable } from './ResultTable'
 import { SqlEditor } from './SqlEditor'
 import type { Case } from '../cases'
@@ -30,6 +31,7 @@ export function CaseView({ case_ }: Props) {
   const [verdict, setVerdict] = useState<'correct' | 'wrong' | null>(null)
   const [caseFileOpen, setCaseFileOpen] = useState(false)
   const [hintsOpen, setHintsOpen] = useState(false)
+  const [notebookOpen, setNotebookOpen] = useState(false)
   const [hintsRevealed, setHintsRevealed] = useState(() =>
     loadHintsRevealed(case_.id),
   )
@@ -169,6 +171,7 @@ export function CaseView({ case_ }: Props) {
               onRestore={handleRestore}
               onPin={handlePin}
               onDelete={handleDelete}
+              onOpenNotebook={() => setNotebookOpen(true)}
             />
           }
         />
@@ -188,6 +191,13 @@ export function CaseView({ case_ }: Props) {
         onReveal={() =>
           setHintsRevealed((n) => Math.min(n + 1, case_.hints.length))
         }
+      />
+
+      <NotebookModal
+        open={notebookOpen}
+        caseId={case_.id}
+        caseTitle={case_.title}
+        onClose={() => setNotebookOpen(false)}
       />
     </div>
   )

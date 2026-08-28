@@ -97,7 +97,7 @@ export function DesktopIcon({
           onOpen?.()
         }
       }}
-      className={`flex flex-col items-center gap-1.5 p-2 rounded-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] ${
+      className={`group flex flex-col items-center gap-1.5 p-2 rounded-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] ${
         selected
           ? 'bg-[var(--color-accent)]/12 outline outline-[1.5px] outline-dashed outline-[var(--color-accent)]'
           : ''
@@ -136,7 +136,7 @@ export function DesktopIcon({
 function AppIcon({ src }: { src: string }) {
   return (
     <div
-      className="flex items-center justify-center"
+      className="flex items-center justify-center transition-transform duration-150 ease-out group-hover:scale-[1.08]"
       style={{
         width: 72,
         height: 60,
@@ -161,7 +161,7 @@ function AppIcon({ src }: { src: string }) {
 function FolderSvg({ variant }: { variant: 'folder' | 'folder-solved' | 'folder-locked' }) {
   return (
     <div
-      className="relative"
+      className="relative transition-transform duration-150 ease-out group-hover:scale-[1.08]"
       style={{
         width: 72,
         height: 54,

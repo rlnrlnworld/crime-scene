@@ -214,6 +214,7 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
           />
         </svg>
       </div>
+
     </div>
   )
 }

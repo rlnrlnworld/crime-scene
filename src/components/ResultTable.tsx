@@ -1,4 +1,4 @@
-import { AlertTriangle, Archive, Table2 } from 'lucide-react'
+import { AlertTriangle, Archive, NotebookPen, Table2 } from 'lucide-react'
 import { ArchiveList } from './ArchiveList'
 import type { HistoryEntry } from '../lib/history'
 import type { QueryResult } from '../lib/db'
@@ -14,6 +14,7 @@ type Props = {
   onRestore: (sql: string) => void
   onPin: (id: string) => void
   onDelete: (id: string) => void
+  onOpenNotebook: () => void
 }
 
 export function ResultTable({
@@ -25,6 +26,7 @@ export function ResultTable({
   onRestore,
   onPin,
   onDelete,
+  onOpenNotebook,
 }: Props) {
   return (
     <div className="flex flex-col h-full bg-[var(--color-ink)]">
@@ -43,11 +45,22 @@ export function ResultTable({
             label={`기록 ${history.length}`}
           />
         </div>
-        {tab === 'result' && result && (
-          <span className="text-[15px] text-[var(--color-muted)] font-mono">
-            {result.rowCount} rows · {result.elapsedMs}ms
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          {tab === 'result' && result && (
+            <span className="text-[15px] text-[var(--color-muted)] font-mono">
+              {result.rowCount} rows · {result.elapsedMs}ms
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onOpenNotebook}
+            title="사건 수첩"
+            className="inline-flex items-center gap-1.5 px-3 py-1 sketchy-tag border-[2px] font-bold text-[15px] bg-transparent text-[var(--color-muted)] border-[var(--color-line-dim)] hover:text-[var(--color-paper)] hover:border-[var(--color-line)] transition"
+          >
+            <NotebookPen className="w-4 h-4" strokeWidth={2.5} />
+            사건 수첩
+          </button>
+        </div>
       </div>
       <div className="flex-1 min-h-0 overflow-auto text-[15px]">
         {tab === 'result' && (

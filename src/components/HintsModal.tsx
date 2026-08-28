@@ -115,7 +115,7 @@ function renderHint(text: string) {
     p.startsWith('`') && p.endsWith('`') ? (
       <code
         key={i}
-        className="bg-[var(--color-ink-2)] text-[var(--color-accent)] px-1.5 py-0.5 rounded border-[1.5px] border-[var(--color-line-dim)] font-mono text-[14px]"
+        className="bg-[var(--color-accent-shadow)] text-[var(--color-accent)] px-1.5 py-0.5 rounded font-mono text-[14px]"
       >
         {p.slice(1, -1)}
       </code>

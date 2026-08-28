@@ -40,3 +40,10 @@ export function snapToGrid(pos: IconPos): IconPos {
     y: GRID_OY + row * GRID_H,
   }
 }
+
+export function rightDefaultPos(index: number, windowWidth: number): IconPos {
+  return {
+    x: windowWidth - GRID_W,
+    y: GRID_OY + index * GRID_H,
+  }
+}

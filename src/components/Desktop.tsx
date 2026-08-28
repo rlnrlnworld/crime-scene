@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Circle, FolderOpen, CheckCircle2 } from 'lucide-react'
+import { Fingerprint, FolderOpen, CheckCircle2 } from 'lucide-react'
 import { DesktopIcon } from './DesktopIcon'
+import { HelpModal } from './HelpModal'
 import { cases, type Case } from '../cases'
 import { loadSolved } from '../lib/history'
 import {
   defaultPos,
   loadLayout,
+  rightDefaultPos,
   saveLayout,
   snapToGrid,
   type IconPos,
@@ -23,6 +25,7 @@ type IconDef = {
   disabled: boolean
   onOpen?: () => void
   variant: 'folder' | 'folder-solved' | 'folder-locked'
+  iconSrc?: string
 }
 
 const COMING_SOON: { id: string; label: string }[] = [
@@ -53,10 +56,18 @@ export function Desktop({ onOpen, activeCase }: Props) {
   )
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [now, setNow] = useState(() => new Date())
+  const [windowWidth, setWindowWidth] = useState(() => window.innerWidth)
+  const [helpOpen, setHelpOpen] = useState(false)
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30_000)
     return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
+    const onResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
 
   const icons: IconDef[] = [
@@ -75,6 +86,21 @@ export function Desktop({ onOpen, activeCase }: Props) {
       disabled: true,
       variant: 'folder-locked' as const,
     })),
+    {
+      id: 'setting',
+      label: 'setting',
+      disabled: false,
+      variant: 'folder' as const,
+      iconSrc: '/setting.svg',
+    },
+    {
+      id: 'help',
+      label: 'help',
+      disabled: false,
+      variant: 'folder' as const,
+      iconSrc: '/help.svg',
+      onOpen: () => setHelpOpen(true),
+    },
   ]
 
   function updatePosition(id: string, pos: IconPos, persist: boolean) {
@@ -104,13 +130,24 @@ export function Desktop({ onOpen, activeCase }: Props) {
         }}
       >
         {icons.map((icon, i) => {
-          const pos = layout[icon.id] ?? defaultPos(i)
+          const appIdx = icons.filter((c) => c.iconSrc).findIndex(
+            (c) => c.id === icon.id,
+          )
+          const caseIdx = icons.filter((c) => !c.iconSrc).findIndex(
+            (c) => c.id === icon.id,
+          )
+          const fallback = icon.iconSrc
+            ? rightDefaultPos(appIdx, windowWidth)
+            : defaultPos(caseIdx)
+          const pos = layout[icon.id] ?? fallback
+          void i
           return (
             <DesktopIcon
               key={icon.id}
               id={icon.id}
               label={icon.label}
               variant={icon.variant}
+              iconSrc={icon.iconSrc}
               position={pos}
               selected={selectedId === icon.id}
               disabled={icon.disabled}
@@ -131,14 +168,14 @@ export function Desktop({ onOpen, activeCase }: Props) {
       >
         <button
           type="button"
-          className="group flex items-center gap-2 px-3 py-1.5 sketchy-btn bg-[var(--color-surface-2)] border-[2px] border-[var(--color-line)] shadow-[2px_2px_0_var(--color-shadow)] hover:bg-[var(--color-accent)] transition-colors"
+          className="group flex items-center gap-2 px-3 py-1.5 sketchy-btn bg-transparent hover:bg-[var(--color-accent)] transition-colors"
         >
-          <Circle
-            className="w-3 h-3 fill-[var(--color-blood)] text-[var(--color-blood)] animate-pulse group-hover:fill-black group-hover:text-black"
-            strokeWidth={0}
+          <Fingerprint
+            className="w-5 h-5 text-[var(--color-accent)] group-hover:text-black"
+            strokeWidth={2.5}
           />
-          <span className="text-[15px] font-bold tracking-wider text-[var(--color-paper)] group-hover:text-black">
-            크라임씬
+          <span className="text-[16px] font-bold tracking-[0.15em] text-[var(--color-paper)] group-hover:text-black">
+            CRIME SCENE
           </span>
           <span className="text-[15px] font-mono text-[var(--color-muted)] group-hover:text-black/70">
             archive
@@ -147,7 +184,7 @@ export function Desktop({ onOpen, activeCase }: Props) {
 
         <div className="h-9 w-[2px] bg-[var(--color-line-dim)] mx-1" />
 
-        {activeCase ? (
+        {activeCase && (
           <div
             className="relative flex items-center gap-2 px-3 py-1.5 sketchy-btn bg-[var(--color-surface)] border-[2px] border-[var(--color-accent)] shadow-[2px_2px_0_var(--color-shadow)]"
             title="사건 열림"
@@ -163,10 +200,6 @@ export function Desktop({ onOpen, activeCase }: Props) {
               #{activeCase.id}
             </span>
             <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-[var(--color-accent)]" />
-          </div>
-        ) : (
-          <div className="text-[15px] text-[var(--color-muted)] font-mono px-2">
-            &gt; 사건 폴더 더블클릭
           </div>
         )}
 
@@ -194,6 +227,8 @@ export function Desktop({ onOpen, activeCase }: Props) {
           </div>
         </div>
       </div>
+
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }

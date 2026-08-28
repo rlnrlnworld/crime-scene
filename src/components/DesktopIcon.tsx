@@ -7,6 +7,7 @@ type Props = {
   label: string
   sublabel?: string
   variant?: 'folder' | 'folder-solved' | 'folder-locked'
+  iconSrc?: string
   position: IconPos
   selected: boolean
   disabled?: boolean
@@ -23,6 +24,7 @@ export function DesktopIcon({
   label,
   sublabel,
   variant = 'folder',
+  iconSrc,
   position,
   selected,
   disabled,
@@ -102,7 +104,7 @@ export function DesktopIcon({
       } ${disabled ? 'opacity-55' : 'cursor-pointer'}`}
       aria-label={label}
     >
-      <FolderSvg variant={variant} />
+      {iconSrc ? <AppIcon src={iconSrc} /> : <FolderSvg variant={variant} />}
       <span
         className={`text-[15px] font-bold text-center leading-tight px-1.5 py-0.5 max-w-full break-keep ${
           selected
@@ -128,6 +130,31 @@ export function DesktopIcon({
         </span>
       )}
     </button>
+  )
+}
+
+function AppIcon({ src }: { src: string }) {
+  return (
+    <div
+      className="flex items-center justify-center"
+      style={{
+        width: 72,
+        height: 60,
+        filter: 'drop-shadow(3px 3px 0 rgba(0,0,0,0.7))',
+      }}
+    >
+      <img
+        src={src}
+        alt=""
+        draggable={false}
+        style={{
+          maxWidth: '100%',
+          maxHeight: '100%',
+          objectFit: 'contain',
+          display: 'block',
+        }}
+      />
+    </div>
   )
 }
 

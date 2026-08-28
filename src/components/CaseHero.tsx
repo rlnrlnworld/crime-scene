@@ -28,9 +28,6 @@ export function CaseHero({
             <div className="flex items-center gap-2 text-[15px] text-[var(--color-muted)] font-mono">
               <span>file</span>
               <span className="text-[var(--color-accent)]">#{case_.id}</span>
-              <span className="ml-1 px-1.5 py-0.5 border-[1.5px] border-[var(--color-line-dim)] rounded text-[var(--color-muted)] text-[13px] uppercase tracking-wider">
-                open
-              </span>
             </div>
             <h1 className="mt-1 text-[26px] md:text-[30px] font-bold text-[var(--color-paper)] leading-[1.15] tracking-tight">
               {case_.title}

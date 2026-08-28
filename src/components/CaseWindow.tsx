@@ -169,15 +169,12 @@ export function CaseWindow({ case_, onClose }: Props) {
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onClose}
             aria-label="닫기"
-            className="w-8 h-8 shrink-0 rounded-full bg-[var(--color-blood)] border-[2px] border-[var(--color-line)] text-white flex items-center justify-center hover:brightness-110 transition"
+            className="w-8 h-8 shrink-0 rounded-md bg-[var(--color-blood)] border-[2px] border-[var(--color-line)] text-white flex items-center justify-center hover:brightness-110 transition"
           >
             <X className="w-4 h-4" strokeWidth={2.5} />
           </button>
           <div className="text-[16px] font-bold text-[var(--color-paper)] truncate">
             {case_.title}
-          </div>
-          <div className="px-2 py-0.5 border-[2px] border-[var(--color-line)] sketchy-tag font-mono text-[15px] text-[var(--color-accent)] bg-[var(--color-surface)] -rotate-2 shrink-0">
-            #{case_.id}
           </div>
         </div>
       </div>

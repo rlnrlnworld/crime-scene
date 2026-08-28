@@ -1,4 +1,4 @@
-import { FileSearch, Lightbulb } from 'lucide-react'
+import { FileSearch, Lightbulb, RotateCcw } from 'lucide-react'
 import { Button } from './Button'
 import type { Case } from '../cases'
 
@@ -6,6 +6,7 @@ type Props = {
   case_: Case
   onOpenFile: () => void
   onOpenHints: () => void
+  onReset: () => void
   hintsRevealed: number
 }
 
@@ -13,6 +14,7 @@ export function CaseHero({
   case_,
   onOpenFile,
   onOpenHints,
+  onReset,
   hintsRevealed,
 }: Props) {
   const totalHints = case_.hints.length
@@ -40,14 +42,18 @@ export function CaseHero({
           <div className="shrink-0 flex flex-col gap-3 items-stretch">
             <Button variant="secondary" size="sm" onClick={onOpenFile}>
               <FileSearch className="w-4 h-4" strokeWidth={2.5} />
-              사건 파일 확인하기
+              사건 파일 열람
             </Button>
             <Button variant="secondary" size="sm" onClick={onOpenHints}>
               <Lightbulb className="w-4 h-4" strokeWidth={2.5} />
-              힌트 확인하기
+              단서 확인
               <span className="ml-0.5 font-mono text-[var(--color-muted)]">
                 · {hintsRevealed}/{totalHints}
               </span>
+            </Button>
+            <Button variant="danger" size="sm" onClick={onReset}>
+              <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
+              기록 초기화
             </Button>
           </div>
         </div>

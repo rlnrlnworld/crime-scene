@@ -154,6 +154,13 @@ INSERT INTO orders (person_id, item, price, ordered_at) VALUES
   ],
   solution: {
     question: '범인의 이름은?',
-    answer: '박도윤',
+    fields: [
+      {
+        id: 'name',
+        label: '범인',
+        placeholder: '이름을 적을 것',
+        answer: '박도윤',
+      },
+    ],
   },
 }

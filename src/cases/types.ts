@@ -3,6 +3,13 @@ export type CaseSchema = {
   columns: { name: string; type: string; note?: string }[]
 }
 
+export type SolutionField = {
+  id: string
+  label: string
+  placeholder: string
+  answer: string
+}
+
 export type Case = {
   id: string
   title: string
@@ -15,6 +22,6 @@ export type Case = {
   hints: string[]
   solution: {
     question: string
-    answer: string
+    fields: SolutionField[]
   }
 }

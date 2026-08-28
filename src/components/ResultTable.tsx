@@ -129,7 +129,7 @@ function ResultView({
   if (!result) {
     return (
       <div className="p-4 text-[var(--color-muted)] font-mono">
-        &gt; 쿼리를 실행하세요.
+        &gt; 쿼리를 실행할 것.
       </div>
     )
   }

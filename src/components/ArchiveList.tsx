@@ -26,7 +26,7 @@ export function ArchiveList({ entries, onRestore, onPin, onDelete }: Props) {
   if (sorted.length === 0) {
     return (
       <div className="p-4 text-[var(--color-muted)] font-mono">
-        &gt; 아직 기록 없음. 쿼리를 실행하면 여기에 쌓임.
+        &gt; 아직 기록이 없다. 쿼리를 실행하면 이곳에 쌓인다.
       </div>
     )
   }

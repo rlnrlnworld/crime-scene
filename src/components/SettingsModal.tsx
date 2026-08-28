@@ -48,12 +48,15 @@ export function SettingsModal({ open, onClose, settings, onChange }: Props) {
             <h2 className="mt-2 text-[28px] md:text-[32px] font-bold text-[var(--color-paper)] leading-[1.1] tracking-tight">
               설정
             </h2>
+            <p className="mt-3 text-[16px] text-[var(--color-paper)]/85 leading-relaxed">
+              작업 환경을 손보면 수사에 도움이 되지 않을까?
+            </p>
           </div>
 
           <div className="px-8 py-5">
             <SettingRow
-              label="아이콘 위치 저장"
-              desc="바탕화면 폴더 위치를 기억. 끄면 새 위치가 저장되지 않음."
+              label="사건 파일 자리 기억"
+              desc="책상 위 사건 파일 배치를 그대로 남긴다. 끄면 매번 초기 자리로 돌아간다."
               checked={settings.saveIconPositions}
               onChange={(v) =>
                 onChange({ ...settings, saveIconPositions: v })
@@ -63,7 +66,7 @@ export function SettingsModal({ open, onClose, settings, onChange }: Props) {
 
           <div className="px-8 py-4 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] flex items-center justify-between">
             <span className="text-[15px] text-[var(--color-muted)] font-mono">
-              esc 로 닫기
+              esc 로 닫을 것
             </span>
             <Button variant="secondary" size="md" onClick={onClose}>
               닫기

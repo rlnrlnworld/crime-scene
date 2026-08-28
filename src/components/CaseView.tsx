@@ -6,6 +6,7 @@ import { CasePanel } from './CasePanel'
 import { ConsoleResultSplit } from './ConsoleResultSplit'
 import { HintsModal } from './HintsModal'
 import { NotebookModal } from './NotebookModal'
+import { ResetConfirmModal } from './ResetConfirmModal'
 import { ResultTable } from './ResultTable'
 import { SolvedOverlay } from './SolvedOverlay'
 import { SqlEditor } from './SqlEditor'
@@ -15,6 +16,7 @@ import {
   loadHintsRevealed,
   loadHistory,
   markSolved,
+  resetCase,
   saveHintsRevealed,
   saveHistory,
   type HistoryEntry,
@@ -29,12 +31,13 @@ export function CaseView({ case_ }: Props) {
   const [sql, setSql] = useState(case_.starterSql ?? '')
   const [result, setResult] = useState<QueryResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [answer, setAnswer] = useState('')
+  const [answers, setAnswers] = useState<Record<string, string>>({})
   const [verdict, setVerdict] = useState<'correct' | 'wrong' | null>(null)
   const [caseFileOpen, setCaseFileOpen] = useState(false)
   const [hintsOpen, setHintsOpen] = useState(false)
   const [notebookOpen, setNotebookOpen] = useState(false)
   const [solvedOverlayOpen, setSolvedOverlayOpen] = useState(false)
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false)
   const [hintsRevealed, setHintsRevealed] = useState(() =>
     loadHintsRevealed(case_.id),
   )
@@ -104,8 +107,10 @@ export function CaseView({ case_ }: Props) {
   }
 
   function handleSubmit() {
-    const normalized = answer.trim()
-    const correct = normalized === case_.solution.answer
+    const fields = case_.solution.fields
+    const correct = fields.every(
+      (f) => (answers[f.id] ?? '').trim() === f.answer,
+    )
     setVerdict(correct ? 'correct' : 'wrong')
     if (correct) {
       markSolved(case_.id)
@@ -117,6 +122,25 @@ export function CaseView({ case_ }: Props) {
     } else {
       track('case_wrong', { caseId: case_.id })
     }
+  }
+
+  function handleReset() {
+    resetCase(case_.id)
+    setSql(case_.starterSql ?? '')
+    setResult(null)
+    setError(null)
+    setAnswers({})
+    setVerdict(null)
+    setHintsRevealed(0)
+    setHistory([])
+    setResultTab('result')
+    setSolvedOverlayOpen(false)
+    setResetConfirmOpen(false)
+    setReady(false)
+    resetDb(case_.seedSql)
+      .then(() => setReady(true))
+      .catch((e) => setError(String(e)))
+    track('case_reset', { caseId: case_.id })
   }
 
   function handleRestore(s: string) {
@@ -151,6 +175,7 @@ export function CaseView({ case_ }: Props) {
           case_={case_}
           onOpenFile={() => setCaseFileOpen(true)}
           onOpenHints={() => setHintsOpen(true)}
+          onReset={() => setResetConfirmOpen(true)}
           hintsRevealed={hintsRevealed}
         />
       </div>
@@ -161,8 +186,10 @@ export function CaseView({ case_ }: Props) {
       >
         <CasePanel
           case_={case_}
-          answer={answer}
-          onAnswerChange={setAnswer}
+          answers={answers}
+          onAnswerChange={(id, v) =>
+            setAnswers((prev) => ({ ...prev, [id]: v }))
+          }
           onSubmit={handleSubmit}
           verdict={verdict}
         />
@@ -220,6 +247,12 @@ export function CaseView({ case_ }: Props) {
         caseId={case_.id}
         caseTitle={case_.title}
         onClose={() => setNotebookOpen(false)}
+      />
+
+      <ResetConfirmModal
+        open={resetConfirmOpen}
+        onCancel={() => setResetConfirmOpen(false)}
+        onConfirm={handleReset}
       />
     </div>
 

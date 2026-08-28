@@ -102,7 +102,7 @@ export function NotebookModal({ open, caseId, caseTitle, onClose }: Props) {
               사건 수첩
             </h2>
             <p className="mt-3 text-[16px] text-[var(--color-paper)]/85 leading-relaxed">
-              {caseTitle} 관련 단서나 추리를 기록하라.
+              {caseTitle} 관련 단서나 추리를 기록해 둘 것.
             </p>
           </div>
 
@@ -112,7 +112,7 @@ export function NotebookModal({ open, caseId, caseTitle, onClose }: Props) {
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={onKeyDown}
-              placeholder="새 메모..."
+              placeholder="새 기록을 남길 것..."
               rows={3}
               className="w-full resize-none text-[15px] text-[var(--color-paper)] bg-[var(--color-ink)] border-[2px] border-[var(--color-line-dim)] rounded px-3 py-2 focus:outline-none focus:border-[var(--color-accent)] placeholder:text-[var(--color-muted)] font-mono leading-relaxed"
             />
@@ -174,7 +174,7 @@ export function NotebookModal({ open, caseId, caseTitle, onClose }: Props) {
 
           <div className="px-8 py-4 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] flex items-center justify-between shrink-0">
             <span className="text-[15px] text-[var(--color-muted)] font-mono">
-              {notes.length} 개 기록됨 · esc 로 닫기
+              {notes.length} 건 기록. esc 로 닫을 것
             </span>
             <Button variant="secondary" size="md" onClick={onClose}>
               닫기

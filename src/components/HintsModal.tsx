@@ -57,17 +57,17 @@ export function HintsModal({
               </span>
             </div>
             <h2 className="mt-2 text-[28px] md:text-[32px] font-bold text-[var(--color-paper)] leading-[1.1] tracking-tight">
-              힌트
+              단서
             </h2>
             <p className="mt-3 text-[16px] text-[var(--color-paper)]/85 leading-relaxed">
-              천천히 하나씩 확인해. 스포일러 강도는 점점 세짐.
+              차근차근 하나씩 뜯어볼 것. 뒤로 갈수록 스포일러가 짙어진다.
             </p>
           </div>
 
           <div className="overflow-auto px-8 py-6 flex-1">
             {revealed === 0 ? (
               <div className="border-[2px] border-dashed border-[var(--color-line-dim)] sketchy-3 p-5 text-[15px] text-[var(--color-paper)]/80 leading-relaxed">
-                아직 열어본 힌트가 없어. 아래 버튼으로 첫 힌트를 확인해봐.
+                아직 확인한 단서가 없다. 아래 버튼으로 첫 단서를 열어볼 것.
               </div>
             ) : (
               <ol className="space-y-3 text-[15px] text-[var(--color-paper)]/90 list-decimal pl-6 marker:text-[var(--color-accent)] marker:font-bold">
@@ -83,12 +83,12 @@ export function HintsModal({
           <div className="px-8 py-4 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] flex items-center justify-between shrink-0">
             {remaining > 0 ? (
               <span className="text-[15px] text-[var(--color-muted)] font-mono">
-                남은 힌트 {remaining}개
+                남은 단서 {remaining}건
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 text-[15px] text-[var(--color-accent)] font-bold">
                 <Check className="w-4 h-4" strokeWidth={2.5} />
-                모두 확인함
+                모두 열람 완료.
               </span>
             )}
             <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export function HintsModal({
               {remaining > 0 && (
                 <Button variant="primary" size="md" onClick={onReveal}>
                   <Lightbulb className="w-4 h-4" strokeWidth={2.5} />
-                  다음 힌트 열기
+                  다음 단서 열기
                 </Button>
               )}
             </div>

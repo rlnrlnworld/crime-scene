@@ -128,7 +128,7 @@ export function HelpModal({ open, onClose }: Props) {
 
           <div className="px-8 py-4 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] flex items-center justify-between shrink-0">
             <span className="text-[15px] text-[var(--color-muted)] font-mono">
-              esc 로 닫기
+              esc 로 닫을 것
             </span>
             <Button variant="secondary" size="md" onClick={onClose}>
               닫기

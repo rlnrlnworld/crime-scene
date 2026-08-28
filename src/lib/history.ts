@@ -78,6 +78,19 @@ export function markSolved(caseId: string): void {
   }
 }
 
+export function resetCase(caseId: string): void {
+  try {
+    localStorage.removeItem(`${STORAGE_KEY}:${caseId}`)
+    localStorage.removeItem(`${HINTS_KEY}:${caseId}`)
+    localStorage.removeItem(`crime-scene:notes:${caseId}`)
+    const s = loadSolved()
+    s.delete(caseId)
+    localStorage.setItem(SOLVED_KEY, JSON.stringify([...s]))
+  } catch {
+    // ignore
+  }
+}
+
 export function timeAgo(ts: number, now = Date.now()): string {
   const s = Math.floor((now - ts) / 1000)
   if (s < 5) return '방금'

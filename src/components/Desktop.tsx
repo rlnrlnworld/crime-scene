@@ -34,7 +34,6 @@ type IconDef = {
 }
 
 const COMING_SOON: { id: string; label: string }[] = [
-  { id: 'locked-atelier', label: '아뜰리에 도난' },
   { id: 'locked-metro', label: '지하철 실종' },
   { id: 'locked-pension', label: '펜션 방화' },
 ]
@@ -247,7 +246,7 @@ export function Desktop({ onOpen, activeCase, minimized, onToggleMinimize }: Pro
                 className="w-full flex items-center gap-2.5 px-4 py-2 text-[15px] text-[var(--color-paper)] hover:bg-[var(--color-accent)] hover:text-black transition-colors text-left"
               >
                 <SettingsIcon className="w-4 h-4" strokeWidth={2.5} />
-                세팅
+                설정
               </button>
               <div className="h-[1.5px] mx-2 my-1 bg-[var(--color-line-dim)]/40" />
               <button
@@ -376,10 +375,10 @@ function ExitConfirmModal({
         <div className="sketchy border-[2.5px] border-[var(--color-line)] bg-[var(--color-surface)] shadow-[6px_6px_0_rgba(0,0,0,0.7)] overflow-hidden">
           <div className="px-8 pt-8 pb-6">
             <h2 className="text-[22px] md:text-[24px] font-bold text-[var(--color-paper)] leading-[1.2] tracking-tight">
-              종료하시겠습니까?
+              정말 이대로 사무실을 나서겠는가?
             </h2>
             <p className="mt-2 text-[15px] text-[var(--color-paper)]/75 leading-relaxed">
-              현재 세션이 끝나고 창이 닫힙니다.
+              진행 중인 수사가 중단되고 창이 닫힌다.
             </p>
           </div>
           <div className="px-8 py-4 border-t-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] flex items-center justify-end gap-2">

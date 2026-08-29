@@ -1,5 +1,6 @@
 import { AlertTriangle, Archive, NotebookPen, Table2 } from 'lucide-react'
 import { ArchiveList } from './ArchiveList'
+import { formatCell } from '../lib/format'
 import type { HistoryEntry } from '../lib/history'
 import type { QueryResult } from '../lib/db'
 
@@ -172,8 +173,3 @@ function ResultView({
   )
 }
 
-function formatCell(v: unknown): string {
-  if (v === null || v === undefined) return 'NULL'
-  if (v instanceof Date) return v.toISOString().replace('T', ' ').slice(0, 19)
-  return String(v)
-}

@@ -10,6 +10,7 @@ import { ResetConfirmModal } from './ResetConfirmModal'
 import { ResultTable } from './ResultTable'
 import { SolvedOverlay } from './SolvedOverlay'
 import { SqlEditor } from './SqlEditor'
+import { SuspectPickerModal } from './SuspectPickerModal'
 import type { Case } from '../cases'
 import { resetDb, runQuery, type QueryResult } from '../lib/db'
 import {
@@ -24,9 +25,10 @@ import {
 
 type Props = {
   case_: Case
+  onSolvedChange?: () => void
 }
 
-export function CaseView({ case_ }: Props) {
+export function CaseView({ case_, onSolvedChange }: Props) {
   const [ready, setReady] = useState(false)
   const [sql, setSql] = useState(case_.starterSql ?? '')
   const [result, setResult] = useState<QueryResult | null>(null)
@@ -36,6 +38,7 @@ export function CaseView({ case_ }: Props) {
   const [caseFileOpen, setCaseFileOpen] = useState(false)
   const [hintsOpen, setHintsOpen] = useState(false)
   const [notebookOpen, setNotebookOpen] = useState(false)
+  const [suspectPickerOpen, setSuspectPickerOpen] = useState(false)
   const [solvedOverlayOpen, setSolvedOverlayOpen] = useState(false)
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false)
   const [hintsRevealed, setHintsRevealed] = useState(() =>
@@ -106,14 +109,17 @@ export function CaseView({ case_ }: Props) {
     }
   }
 
-  function handleSubmit() {
+  function handleSubmit(overrides?: Record<string, string>) {
+    const target = overrides ? { ...answers, ...overrides } : answers
     const fields = case_.solution.fields
     const correct = fields.every(
-      (f) => (answers[f.id] ?? '').trim() === f.answer,
+      (f) => (target[f.id] ?? '').trim() === f.answer,
     )
     setVerdict(correct ? 'correct' : 'wrong')
     if (correct) {
       markSolved(case_.id)
+      onSolvedChange?.()
+      setSuspectPickerOpen(false)
       setSolvedOverlayOpen(true)
       track('case_solved', {
         caseId: case_.id,
@@ -126,6 +132,7 @@ export function CaseView({ case_ }: Props) {
 
   function handleReset() {
     resetCase(case_.id)
+    onSolvedChange?.()
     setSql(case_.starterSql ?? '')
     setResult(null)
     setError(null)
@@ -192,6 +199,7 @@ export function CaseView({ case_ }: Props) {
           }
           onSubmit={handleSubmit}
           verdict={verdict}
+          onOpenSuspectPicker={() => setSuspectPickerOpen(true)}
         />
       </div>
 
@@ -254,11 +262,31 @@ export function CaseView({ case_ }: Props) {
         onCancel={() => setResetConfirmOpen(false)}
         onConfirm={handleReset}
       />
+
+      {case_.persons && (
+        <SuspectPickerModal
+          open={suspectPickerOpen}
+          persons={case_.persons}
+          auxFields={case_.solution.fields.filter((f) => f.id !== 'name')}
+          verdict={verdict}
+          onSubmit={(person, auxAnswers) => {
+            const merged = { name: person.name, ...auxAnswers }
+            setAnswers((prev) => ({ ...prev, ...merged }))
+            handleSubmit(merged)
+          }}
+          onClose={() => setSuspectPickerOpen(false)}
+        />
+      )}
     </div>
 
     {solvedOverlayOpen && (
       <SolvedOverlay
-        answer={case_.solution.answer}
+        case_={case_}
+        culpritName={
+          case_.solution.fields.find((f) => f.id === 'name')?.answer ??
+          case_.solution.fields[0]?.answer ??
+          ''
+        }
         onClose={() => setSolvedOverlayOpen(false)}
       />
     )}

@@ -5,7 +5,6 @@ import { DesktopIcon } from './DesktopIcon'
 import { HelpModal } from './HelpModal'
 import { SettingsModal } from './SettingsModal'
 import { cases, type Case } from '../cases'
-import { loadSolved } from '../lib/history'
 import { loadSettings, saveSettings, type Settings } from '../lib/settings'
 import {
   defaultPos,
@@ -22,6 +21,7 @@ type Props = {
   activeCase: Case | null
   minimized?: boolean
   onToggleMinimize?: () => void
+  solved: Set<string>
 }
 
 type IconDef = {
@@ -53,8 +53,13 @@ function formatDate(d: Date) {
   return `${y}.${m}.${day} ${WEEKDAY[d.getDay()]}`
 }
 
-export function Desktop({ onOpen, activeCase, minimized, onToggleMinimize }: Props) {
-  const [solved] = useState(() => loadSolved())
+export function Desktop({
+  onOpen,
+  activeCase,
+  minimized,
+  onToggleMinimize,
+  solved,
+}: Props) {
   const [layout, setLayout] = useState<Record<string, IconPos>>(() =>
     loadLayout(),
   )

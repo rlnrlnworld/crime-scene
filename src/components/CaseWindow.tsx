@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, Minus } from 'lucide-react'
+import { X, Minus, Maximize2, Minimize2 } from 'lucide-react'
 import { CaseView } from './CaseView'
 import type { Case } from '../cases'
 
@@ -8,6 +8,7 @@ type Props = {
   minimized?: boolean
   onMinimize?: () => void
   onClose: () => void
+  onSolvedChange?: () => void
 }
 
 type Pos = { x: number; y: number }
@@ -50,11 +51,22 @@ function defaultPos(size: Size): Pos {
   }
 }
 
-export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
+export function CaseWindow({
+  case_,
+  minimized,
+  onMinimize,
+  onClose,
+  onSolvedChange,
+}: Props) {
   const [size, setSize] = useState<Size>(() => loadJSON<Size>(SIZE_KEY) ?? defaultSize())
   const [pos, setPos] = useState<Pos>(
     () => loadJSON<Pos>(POS_KEY) ?? defaultPos(loadJSON<Size>(SIZE_KEY) ?? defaultSize()),
   )
+  const [maximized, setMaximized] = useState(false)
+  const [viewport, setViewport] = useState<Size>(() => ({
+    w: window.innerWidth,
+    h: window.innerHeight,
+  }))
   const posRef = useRef(pos)
   useEffect(() => {
     posRef.current = pos
@@ -64,6 +76,7 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
     const onResize = () => {
       const vw = window.innerWidth
       const vh = window.innerHeight
+      setViewport({ w: vw, h: vh })
       setPos((p) => ({
         x: Math.max(-size.w + MIN_VISIBLE, Math.min(vw - MIN_VISIBLE, p.x)),
         y: Math.max(0, Math.min(vh - MIN_VISIBLE, p.y)),
@@ -74,6 +87,7 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
   }, [size.w])
 
   function onDragStart(e: React.PointerEvent) {
+    if (maximized) return
     e.preventDefault()
     const startX = e.clientX
     const startY = e.clientY
@@ -111,6 +125,7 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
   }
 
   function onResizeStart(e: React.PointerEvent) {
+    if (maximized) return
     e.preventDefault()
     e.stopPropagation()
     const startX = e.clientX
@@ -141,30 +156,30 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
     window.addEventListener('pointerup', up)
   }
 
+  const effectivePos = maximized ? { x: 0, y: 0 } : pos
+  const effectiveSize = maximized ? viewport : size
+
   return (
     <div
       style={{
         position: 'fixed',
-        left: pos.x,
-        top: pos.y,
-        width: size.w,
-        height: size.h,
+        left: effectivePos.x,
+        top: effectivePos.y,
+        width: effectiveSize.w,
+        height: effectiveSize.h,
         zIndex: 40,
         display: minimized ? 'none' : 'flex',
       }}
-      className="flex flex-col sketchy border-[2.5px] border-[var(--color-line)] bg-[var(--color-ink)] shadow-[6px_6px_0_rgba(0,0,0,0.7)] overflow-hidden"
+      className={`flex flex-col border-[2.5px] border-[var(--color-line)] bg-[var(--color-ink)] shadow-[6px_6px_0_rgba(0,0,0,0.7)] overflow-hidden ${
+        maximized ? '' : 'sketchy'
+      }`}
     >
       <div
         onPointerDown={onDragStart}
-        onDoubleClick={() => {
-          const s = defaultSize()
-          const p = defaultPos(s)
-          setSize(s)
-          setPos(p)
-          saveJSON(SIZE_KEY, s)
-          saveJSON(POS_KEY, p)
-        }}
-        className="flex items-center justify-between px-4 py-2.5 border-b-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] shrink-0 cursor-grab active:cursor-grabbing select-none touch-none"
+        onDoubleClick={() => setMaximized((m) => !m)}
+        className={`flex items-center justify-between px-4 py-2.5 border-b-[2.5px] border-[var(--color-line)] bg-[var(--color-ink-2)] shrink-0 select-none touch-none ${
+          maximized ? '' : 'cursor-grab active:cursor-grabbing'
+        }`}
       >
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-1.5 shrink-0">
@@ -188,6 +203,20 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
                 <Minus className="w-4 h-4" strokeWidth={2.5} />
               </button>
             )}
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => setMaximized((m) => !m)}
+              aria-label={maximized ? '창 복원' : '최대화'}
+              title={maximized ? '창 복원' : '최대화'}
+              className="w-8 h-8 rounded-md bg-[var(--color-teal)] border-[2px] border-[var(--color-line)] text-[var(--color-ink)] flex items-center justify-center hover:brightness-110 transition"
+            >
+              {maximized ? (
+                <Minimize2 className="w-4 h-4" strokeWidth={2.5} />
+              ) : (
+                <Maximize2 className="w-4 h-4" strokeWidth={2.5} />
+              )}
+            </button>
           </div>
           <div className="text-[16px] font-bold text-[var(--color-paper)] truncate">
             {case_.title}
@@ -217,24 +246,26 @@ export function CaseWindow({ case_, minimized, onMinimize, onClose }: Props) {
       </div>
 
       <div className="flex-1 min-h-0">
-        <CaseView case_={case_} />
+        <CaseView case_={case_} onSolvedChange={onSolvedChange} />
       </div>
 
-      <div
-        onPointerDown={onResizeStart}
-        aria-label="크기 조절"
-        className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize flex items-end justify-end p-1 z-10"
-        style={{ touchAction: 'none' }}
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path
-            d="M2 10 L10 2 M5 10 L10 5 M8 10 L10 8"
-            stroke="var(--color-line)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
+      {!maximized && (
+        <div
+          onPointerDown={onResizeStart}
+          aria-label="크기 조절"
+          className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize flex items-end justify-end p-1 z-10"
+          style={{ touchAction: 'none' }}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path
+              d="M2 10 L10 2 M5 10 L10 5 M8 10 L10 8"
+              stroke="var(--color-line)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      )}
 
     </div>
   )

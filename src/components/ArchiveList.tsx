@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, ArrowUpRight, Pin, PinOff, Trash2 } from 'lucide-react'
+import { formatCell } from '../lib/format'
 import { timeAgo, type HistoryEntry } from '../lib/history'
 
 type Props = {
@@ -131,7 +132,7 @@ export function ArchiveList({ entries, onRestore, onPin, onDelete }: Props) {
                                 key={j}
                                 className="px-2 py-1 border-b border-[var(--color-line-dim)]/30 text-[var(--color-paper)] whitespace-nowrap"
                               >
-                                {String(cell ?? 'NULL')}
+                                {formatCell(cell)}
                               </td>
                             ))}
                           </tr>

@@ -1,4 +1,4 @@
-import { Database, Send, XCircle } from 'lucide-react'
+import { Database, Send, UserSearch, XCircle } from 'lucide-react'
 import { Button } from './Button'
 import { Card } from './Card'
 import { SectionLabel } from './SectionLabel'
@@ -10,6 +10,7 @@ type Props = {
   onAnswerChange: (id: string, v: string) => void
   onSubmit: () => void
   verdict: 'correct' | 'wrong' | null
+  onOpenSuspectPicker: () => void
 }
 
 export function CasePanel({
@@ -18,9 +19,11 @@ export function CasePanel({
   onAnswerChange,
   onSubmit,
   verdict,
+  onOpenSuspectPicker,
 }: Props) {
   const fields = case_.solution.fields
   const canSubmit = fields.every((f) => (answers[f.id] ?? '').trim().length > 0)
+  const usePicker = Boolean(case_.persons)
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -71,44 +74,58 @@ export function CasePanel({
         <SectionLabel className="mb-2" underline>
           {case_.solution.question}
         </SectionLabel>
-        <div className="space-y-2 mt-2">
-          {fields.map((f) => (
-            <div key={f.id} className="flex items-center gap-2">
-              <label
-                htmlFor={`answer-${f.id}`}
-                className="shrink-0 w-24 text-[14px] font-bold text-[var(--color-muted)]"
-              >
-                {f.label}
-              </label>
-              <input
-                id={`answer-${f.id}`}
-                value={answers[f.id] ?? ''}
-                onChange={(e) => onAnswerChange(f.id, e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.nativeEvent.isComposing) return
-                  if (e.key === 'Enter' && canSubmit) onSubmit()
-                }}
-                placeholder={f.placeholder}
-                className="flex-1 px-3 py-2 sketchy-btn bg-[var(--color-ink)] border-[2px] border-[var(--color-line)] text-[15px] text-[var(--color-paper)] placeholder:text-[var(--color-muted)] outline-none focus:border-[var(--color-accent)]"
-              />
-            </div>
-          ))}
-          <div className="flex justify-end pt-1">
+        {usePicker ? (
+          <div className="mt-2">
             <Button
               variant="primary"
               size="md"
-              onClick={onSubmit}
-              disabled={!canSubmit}
+              onClick={onOpenSuspectPicker}
+              fullWidth
             >
-              <Send className="w-3.5 h-3.5" strokeWidth={2.5} />
-              지목
+              <UserSearch className="w-4 h-4" strokeWidth={2.5} />
+              용의자 지목하기
             </Button>
           </div>
-        </div>
-        {verdict === 'wrong' && (
+        ) : (
+          <div className="space-y-2 mt-2">
+            {fields.map((f) => (
+              <div key={f.id} className="flex items-center gap-2">
+                <label
+                  htmlFor={`answer-${f.id}`}
+                  className="shrink-0 w-24 text-[14px] font-bold text-[var(--color-muted)]"
+                >
+                  {f.label}
+                </label>
+                <input
+                  id={`answer-${f.id}`}
+                  value={answers[f.id] ?? ''}
+                  onChange={(e) => onAnswerChange(f.id, e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.nativeEvent.isComposing) return
+                    if (e.key === 'Enter' && canSubmit) onSubmit()
+                  }}
+                  placeholder={f.placeholder}
+                  className="flex-1 px-3 py-2 sketchy-btn bg-[var(--color-ink)] border-[2px] border-[var(--color-line)] text-[15px] text-[var(--color-paper)] placeholder:text-[var(--color-muted)] outline-none focus:border-[var(--color-accent)]"
+                />
+              </div>
+            ))}
+            <div className="flex justify-end pt-1">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={onSubmit}
+                disabled={!canSubmit}
+              >
+                <Send className="w-3.5 h-3.5" strokeWidth={2.5} />
+                지목
+              </Button>
+            </div>
+          </div>
+        )}
+        {!usePicker && verdict === 'wrong' && (
           <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 border-[2px] border-[var(--color-line)] bg-[var(--color-blood)] text-white text-[15px] font-bold sketchy-tag rotate-1">
             <XCircle className="w-4 h-4" strokeWidth={2.5} />
-            오답. 다시 조사해 볼 것.
+            오답. 다시 조사해보자.
           </div>
         )}
       </div>

@@ -8,6 +8,15 @@ export type SolutionField = {
   label: string
   placeholder: string
   answer: string
+  options?: string[]
+}
+
+export type PersonProfile = {
+  id: number
+  name: string
+  avatar: string
+  role?: string
+  disabled?: boolean
 }
 
 export type Case = {
@@ -15,10 +24,12 @@ export type Case = {
   title: string
   brief: string
   story: string
+  resolution: string
   difficulty: 1 | 2 | 3 | 4 | 5
   seedSql: string
   starterSql?: string
   schemas: CaseSchema[]
+  persons?: PersonProfile[]
   hints: string[]
   solution: {
     question: string

@@ -68,8 +68,8 @@ CREATE TABLE metro_line (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   color TEXT NOT NULL,
-  first_train TIME,
-  last_train TIME
+  first_train TEXT,
+  last_train TEXT
 );
 
 CREATE TABLE station (
@@ -214,8 +214,8 @@ INSERT INTO interview (person_id, transcript) VALUES
         { name: 'id', type: 'INT (PK)' },
         { name: 'name', type: 'TEXT' },
         { name: 'color', type: 'TEXT' },
-        { name: 'first_train', type: 'TIME' },
-        { name: 'last_train', type: 'TIME' },
+        { name: 'first_train', type: 'TEXT' },
+        { name: 'last_train', type: 'TEXT' },
       ],
     },
     {

@@ -34,7 +34,6 @@ type IconDef = {
 }
 
 const COMING_SOON: { id: string; label: string }[] = [
-  { id: 'locked-metro', label: '지하철 실종' },
   { id: 'locked-pension', label: '펜션 방화' },
 ]
 

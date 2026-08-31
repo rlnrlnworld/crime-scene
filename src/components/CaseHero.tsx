@@ -1,5 +1,6 @@
 import { FileSearch, Lightbulb, RotateCcw } from 'lucide-react'
 import { Button } from './Button'
+import { LiarNotice } from './LiarNotice'
 import type { Case } from '../cases'
 
 type Props = {
@@ -57,6 +58,8 @@ export function CaseHero({
             </Button>
           </div>
         </div>
+
+        {case_.difficulty >= 3 && <LiarNotice />}
       </div>
     </div>
   )

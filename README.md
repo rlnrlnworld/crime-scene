@@ -60,7 +60,6 @@
 | **사건 = 하나의 TS 파일** (`src/cases/<slug>.ts`) | 시나리오 · 시드 SQL · 스키마 설명 · 힌트 · 정답이 한 곳에 있어 사건 추가가 파일 하나로 끝남. 타입(`Case`)이 누락 필드를 잡아줌 |
 | 정답 검증은 **클라이언트에서** | 토이 프로젝트 범위. 정답이 번들에 포함되는 건 알고 선택한 트레이드오프 |
 | 진행 상태는 **localStorage** | 해결 기록 · 힌트 공개 상태 · 수첩 · 아이콘 위치 · 설정. 로그인 없이 바로 플레이 |
-| **디자인 시스템 문서화** (`.core/`) | 토큰 · 컴포넌트 · 패턴 · 사건 저작 규칙을 문서로 고정. "폰트 15px 미만 금지", "★3+ 사건은 위증 필수" 같은 절대 원칙 포함 |
 
 ---
 
@@ -95,26 +94,8 @@ src/
   lib/
     db.ts                PGlite 싱글턴, resetDb, runQuery
     history.ts · notes.ts · settings.ts · desktop-layout.ts   localStorage
-.core/                   디자인 시스템 · 사건 저작 가이드
 public/avatars/          용의자 아바타 svg
 ```
-
----
-
-## ✍️ 사건 추가하기
-
-1. `src/cases/<slug>.ts`에 `Case` 객체 하나를 export
-2. `src/cases/index.ts`의 `cases` 배열에 등록
-3. `persons`를 넣으면 아바타 피커로, 없으면 텍스트 입력으로 답함. 아바타는 `public/avatars/<avatar>.svg`
-
-난이도별 원칙은 `.core/README.md`에 있습니다. 요약하면:
-
-| 별 | 핵심 |
-| --- | --- |
-| ★ | 단일 JOIN, 진술은 모두 참 |
-| ★★ | 다중 JOIN, 시간창 필터, 후보 여럿 |
-| ★★★+ | 범인은 반드시 `interview`에서 위증. 로그와 대조하면 반박되는 형태로 설계 |
-| ★★★★ | 목격자 진술도 일부 모호. GROUP BY · HAVING · 서브쿼리 |
 
 ---
 
